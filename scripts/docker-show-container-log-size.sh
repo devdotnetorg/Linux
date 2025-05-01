@@ -7,7 +7,7 @@
 # sudo ./docker-show-container-log-size.sh clear
 
 # Display the size of the container log
-# Script version: 1.0
+# Script version: 1.1
 # DevDotNet.ORG <anton@devdotnet.org> MIT License
 
 set -e #Exit immediately if a comman returns a non-zero status
@@ -31,9 +31,13 @@ do
   declare UNIT_SIZE="byte"
 
   # check none
-  if [ -z "${CONTAINER_TARGET}" ]; then
-    CONTAINER_TARGET="none"
-    PRINT_TARGET_SIZE="none"
+  if [ -z "${CONTAINER_TARGET}" ] || [ ! -f "${CONTAINER_TARGET}" ]; then
+    if [ -z "${CONTAINER_TARGET}" ]; then
+      CONTAINER_TARGET="none"
+      PRINT_TARGET_SIZE="none"
+    else
+      PRINT_TARGET_SIZE="REMOVED"
+    fi
   else
     declare TARGET_SIZE=$(stat --printf="%s" ${CONTAINER_TARGET})
     declare ZERO_TARGET_SIZE=0
