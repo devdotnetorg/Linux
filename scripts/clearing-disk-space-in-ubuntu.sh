@@ -9,6 +9,9 @@
 
 set -e #Exit immediately if a comman returns a non-zero status
 
+# **************** definition of variables ****************
+declare ARCH_OS=$(uname -m) #aarch64, armv7l, x86_64 or riscv64
+
 echo "Let's start cleaning the Ubuntu system..."
 
 # Save free space before cleaning (in megabytes)
@@ -34,8 +37,30 @@ sudo apt --purge autoremove -y \
 && sudo rm -rf /var/cache/man/
 
 # Updating the GRUB bootloader
-echo "4. Updating the GRUB bootloader..."
-sudo apt autoremove -y && sudo update-grub && sudo update-grub2
+echo "4. Updating the GRUB/U-BOOT bootloader..."
+# Select
+case $ARCH_OS in
+
+  aarch64)
+    sudo apt autoremove -y && sudo update-initramfs -u -k all
+    ;;
+
+  armv7l)
+    sudo apt autoremove -y && sudo update-initramfs -u -k all
+    ;;
+
+  x86_64)
+    sudo apt autoremove -y && sudo update-grub && sudo update-grub2
+    ;;
+
+  riscv64)
+    echo "There is no option for RISC-V (riscv64)"
+    ;; 
+
+  *)
+    echo "No option"
+    ;;
+esac
 
 # Clearing system logs and deleting logs
 echo "5. Clearing system logs and deleting logs..."
