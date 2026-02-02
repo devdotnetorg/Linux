@@ -13,6 +13,7 @@ set -e #Exit immediately if a comman returns a non-zero status
 declare ARCH_OS=$(uname -m) #aarch64, armv7l, x86_64 or riscv64
 
 echo "Let's start cleaning the Ubuntu system..."
+echo "Architecture: ${ARCH_OS}"
 
 # Save free space before cleaning (in megabytes)
 FREE_BEFORE=$(df / | awk 'NR==2 {print $4}')
@@ -20,7 +21,7 @@ FREE_BEFORE_MB=$((FREE_BEFORE / 1024))
 
 # Removing Old Linux Kernels
 echo "1. Removing Old Linux Kernels..."
-sudo apt-get purge -y $(dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | head -n -1)
+sudo apt-get purge -y $(dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | head -n -1) || echo "There are no old kernels to remove"
 
 # Removing unused old versions of packages
 echo "2. Removing unused old versions of packages..."
